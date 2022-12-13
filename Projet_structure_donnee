@@ -1,0 +1,644 @@
+#include <conio.h>
+#include <stdio.h>
+#include <string.h>
+#include <tchar.h>
+#include <windows.h>
+#include <stdlib.h>
+#include <time.h>
+  
+  int verification(int RCode);
+  void ouverture();
+  void depot();
+  void retraits();
+  void transfert();
+  void modifier();
+  void supprimer(); 
+  void bloquer();
+  void afficher();
+   	  void time(){
+ 	SYSTEMTIME t;
+ 	GetSystemTime(&t);
+ 	printf("Date & Time       :  ");
+ 	printf("%d-%d-%d %d:%d:%d\n\n",t.wDay,t.wMonth,t.wYear,t.wHour,t.wMinute,t.wSecond);
+ }
+//WINDOW PROCEDURE
+           
+            LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
+            TCHAR szClassName[ ] = _T("COMPTE BANCAIRE");
+		     int WINAPI WinMain (HINSTANCE hThisInstance,
+                     HINSTANCE hPrevInstance,
+                     LPSTR lpszArgument,
+                     int nCmdShow)	
+            {
+              //password();
+              HWND hwnd;
+              MSG messages;
+              WNDCLASSEX cf;
+          cf.hInstance = hThisInstance;
+          cf.lpszClassName = szClassName;
+          cf.lpfnWndProc = WindowProcedure;
+          cf.style = CS_DBLCLKS;
+          cf.cbSize = sizeof (WNDCLASSEX);
+    //use default icon and mouse-pointer
+          cf.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+          cf.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+          cf.hCursor = LoadCursor (NULL, IDC_ARROW);
+          cf.lpszMenuName = NULL;    //no menu
+          cf.cbClsExtra = 0;        //no extra byte after the window class
+          cf.cbWndExtra = 0;       // structure or the window instance
+    cf.hbrBackground = (HBRUSH)(COLOR_WINDOW+18);
+     // register the windows class
+     if (!RegisterClassEx (&cf))
+        return 0;
+     //the class is registered, create the programme
+    hwnd = CreateWindowEx (0, szClassName,_T("Ma premiere fenetre winAPI !"),
+           WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 5500,1000,HWND_DESKTOP,NULL, hThisInstance,NULL);
+     
+     HWND boutton = CreateWindow (TEXT ("static"),
+     ":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:",
+                                 WS_CHILD | WS_VISIBLE | SS_CENTER,
+                                 250,30,
+                                 800,65,
+                                 hwnd,
+                                 (HMENU)0,
+                                 NULL,
+                                 NULL) ; time();
+     HWND boutton1 = CreateWindow (TEXT ("button"),
+                    " Ouverture d'une Compte ou plusieurs comptes bancaires",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,150,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)1,
+                                 NULL,
+                                 NULL) ;
+                                 
+      HWND boutton2 = CreateWindow (TEXT ("button"),
+                                 " Depots sur un compte",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,200,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)2,
+                                 NULL,
+                                 NULL) ;
+                                 
+       HWND boutton3 = CreateWindow (TEXT ("button"),
+                                 " Retraits sur un Compte",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,250,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)3,
+                                 NULL,
+                                 NULL) ;
+                            
+        HWND boutton4 = CreateWindow (TEXT ("button"),
+                                 " Transfert de l'argent d'un compte à un autre.",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,300,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)4,
+                                 NULL,
+                                 NULL) ;
+                                
+        HWND boutton5 = CreateWindow (TEXT ("button"),
+                                 " modifier les informations sur un compte ",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,350,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)5,
+                                 NULL,
+                                 NULL) ;
+ 
+         HWND boutton6 = CreateWindow (TEXT ("button"),
+                                 " Supprimer un compte ",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,400,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)6,
+                                 NULL,
+                                 NULL) ;
+
+         HWND boutton7 = CreateWindow (TEXT ("button"),
+                                 " Bloquer un compte ",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,450,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)7,
+                                 NULL,
+                                 NULL) ;
+
+          HWND boutton8 = CreateWindow (TEXT ("button"),
+                                 " .- Afficher la liste de compte ",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,500,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)8,
+                                 NULL,
+                                 NULL) ;
+          HWND boutton9 = CreateWindow (TEXT ("button"),
+                                 " Quitter",
+                                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                                 150,550,
+                                 1000,40,
+                                 hwnd,
+                                 (HMENU)9,
+                                 NULL,
+                                 NULL) ;
+          
+                                 
+if(!hwnd)
+	return FALSE;
+    ShowWindow (hwnd, nCmdShow);
+    UpdateWindow(hwnd);
+
+    while (GetMessage (&messages, NULL, 0, 0))
+    {
+        TranslateMessage(&messages);
+        DispatchMessage(&messages);
+    }
+
+    return messages.wParam;
+ }
+       LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+    { 	 
+    switch (message)                /* handle the messages */
+    {
+        case WM_RBUTTONUP:
+             {
+             case WM_COMMAND:
+
+                 switch(LOWORD(wParam)) 
+                {
+                    case 1: 
+                            DestroyWindow(hwnd);
+                            ouverture();
+                        break;
+                    case 2: 
+                            DestroyWindow(hwnd);
+                             depot();
+                        break;
+                    case 3: 
+                            DestroyWindow(hwnd);
+                             retraits();
+                        break;
+                    case 4: 
+                            DestroyWindow(hwnd);
+                             transfert();
+                        break;  
+					case 5: 
+                            DestroyWindow(hwnd);
+                             modifier();
+                        break;
+                        case 6: 
+                                DestroyWindow(hwnd);
+                                supprimer();
+                        break;
+                    case 7: 
+                            DestroyWindow(hwnd);
+                            bloquer();
+                        break;
+                    case 8: 
+                            DestroyWindow(hwnd);
+                            afficher();
+                        break;
+                    case 9 :
+                    	MessageBeep(MB_OK);
+                    	DestroyWindow(hwnd);
+                    	exit(0);
+                    	break;
+					default :
+					 return 0;	  
+            }
+              
+        case WM_CREATE:
+            break;
+        case WM_DESTROY:
+                        PostQuitMessage (0);  
+                break;
+        default:           
+            return DefWindowProc (hwnd, message, wParam, lParam);
+     }
+    return 0;
+     }
+  }
+//Declaration structures
+typedef struct ouverture OP;
+struct ouverture
+{
+ int  Code;
+ float Solde;
+ char Nom[20];
+ char Prenom[20];
+ char Sexe[5];
+ char type[10];
+ char adresse[20];
+ char  telf[8];
+ int Block;
+ };
+ OP KN;
+   
+  int i,qte,n;
+  FILE *fptr;
+int verification(int RCode) {
+	 	fptr = fopen("ouver.txt", "r");
+ 	do {
+	 		fscanf(fptr,"%d\t%s\t%s\t%s\t%s\t%s\t%f\t%s\t%d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);
+	 		fflush(stdin); //pour liberer l'espace memoire
+	 		if(KN.Code == RCode) {
+	 			fclose(fptr);
+	 			return 1;
+			 }			 
+	   } while(!feof(fptr));//lire tant qu'on a une ligne ds le fichier
+		 fclose(fptr);
+		 return -1;
+		 getch();
+	 }
+
+void ouverture()
+{	 
+      //system("color 6b");
+      int longr=0;
+     fptr = fopen("ouver.txt","r");
+	   if(fptr==NULL)
+	 fptr = fopen("ouver.txt","w");
+	  else
+	  fptr = fopen("ouver.txt","a");
+	   printf("\t\t\t:==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n"); 
+	  printf("          OUVERTURE D'UN COMPTE \n");	
+	do{
+	   	printf("\tCreer un ou plusieurs compte");
+	    scanf("%d",&n);
+	    fflush(stdin);
+     }while(n<=0);
+				 for(i =0 ; i<n; i++)
+				 {
+		      	    printf("\tCreation compte # %d \n", i+1);
+		      	    printf("\tSaisir NOM                 : "); gets(KN.Nom);fflush(stdin);
+	                printf("\tSaisir PRENOM              : "); gets(KN.Prenom);fflush(stdin);
+		       	    printf("\tSaisir Code client         : "); scanf("%d",&KN.Code); fflush(stdin);		      	      	         
+		      	    printf("\tSaisir SEXE                : ");gets(KN.Sexe);fflush(stdin);
+					printf("\tSaisir ADRESSE             :");  gets(KN.adresse);fflush(stdin);
+					 do {
+			              printf("\tTELEPHONE           :+(509)");
+			              scanf("%s",&KN.telf);fflush(stdin);
+			              longr = strlen(KN.telf);
+			                 if(longr !=8){
+			    	           printf("\tLe numero doit avoir 8 chiffres");	
+					           printf("\nReessayer....\n");	
+				             }
+			           }while(longr!=8);				     		
+				 printf("\tQuantite de solde (Il doit etre superieur que 250)   : "); scanf("%f",&KN.Solde);fflush(stdin);	
+							 while(KN.Solde <250){
+							 	printf("\tIl doit etre superieur que 250:\n\t\t "); 
+							 	scanf("%f",&KN.Solde);fflush(stdin);
+							 }
+	                fprintf(fptr,"%d\t%s\t%s\t%s\t%s\t%d\t%f\t%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block);
+		    }
+		    printf("\t\t\t\tL'ouverture du compte effectue avec succes \n");
+			printf("\t\t\t\t=======================================================\n"); 
+            fclose(fptr);
+		     getch();
+	        fclose(fptr);
+	        getch();
+}
+	
+void depot()
+{      float Depot;
+       int rep,codeD;
+       float dep;
+        printf(":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+            printf("Saisir le code du client :   ");
+	    	scanf("%d", &codeD);
+	    	fflush(stdin); 
+	  if(verification(codeD)==1) 
+	  {
+	  	if(KN.Block!=5){
+	     FILE *fptr;
+	     FILE *file;
+	     fptr = fopen("ouver.txt", "r");
+	     file= fopen("dep.txt", "a");    	
+			do {
+				    fscanf(fptr,"%d %s %s %s %s %s %f %s\t%d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);
+				 if(KN.Code==codeD) {
+				 	 KN.Code=codeD;
+     	                       printf("Saisir le montant a deposer  :   ");
+	    		   	           scanf("%f", &dep);
+	    		   	           fflush(stdin);
+	    		   	           KN.Solde = KN.Solde + dep;
+							   Depot = KN.Solde;
+							   printf("Le depot a ete realise avec succes vous avez depose %.3f sur votre compte",dep); 
+     	                        printf("\nMONTANT_ACTUEL    : %.2f\n\n",Depot);    
+							}
+						fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block); 	     
+	    		   	} while(!feof(fptr));
+	    		   	
+						fclose(file);
+ 	                    fclose(fptr); 	                
+	                  remove("ouver.txt");	                     
+	                  rename("dep.txt","ouver.txt");
+	                  
+	   		}
+	   		else
+	   		printf("Votre compte est Bloquer");
+	}
+	    else
+	      printf("Code N'existe pas ");
+	getch();
+}
+void supprimer() {
+	 printf(":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+	int CodeS,test=0;
+	 printf("Saisir le code du client a supprimer    :   ");
+	 scanf("%d", &CodeS);
+	  
+	if(verification(CodeS)==1) {
+		if(KN.Block!=5){
+	     FILE *fptr;
+	     FILE *file;
+	     fptr = fopen("ouver.txt", "r");
+	     file= fopen("sup.txt", "a");   	      	  
+			do {
+			     test++;	
+				fscanf(fptr,"%d %s %s %s %s %s %f %s\t%d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);
+	   			if(KN.Code != CodeS){	         
+				fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type);
+			  }  
+			} while(!feof(fptr));
+				fclose(file);
+                fclose(fptr);
+			    remove("ouver.txt");
+				rename("sup.txt","ouver.txt");
+				printf("Suppression avec succes!\n");
+	}
+	else 
+	printf("Votre compte est Bloquer");
+}
+ else{
+ 	 printf("Code n'Existe ");
+ }
+ 
+  getch();
+}  	  	    
+void retraits(){
+	 printf(":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+       float Retrait,mont;
+       int pass;
+            printf("Saisir le code du client :   ");
+	    	scanf("%d", &pass);
+	    	fflush(stdin); 
+	  if(verification(pass)==1) 
+	  {
+	  	if(KN.Block!=5){
+	     FILE *fptr;
+	     FILE *file;
+	     fptr = fopen("ouver.txt", "r");
+	     file= fopen("dep.txt", "a");    	
+			do {
+				    fscanf(fptr,"%d %s %s %s %s %s %f %s %d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);
+				 if(KN.Code==pass) {
+				 	 KN.Code=pass;
+     	                     do{
+							    printf("Saisir le montant a retirer  :   ");
+	    		   	           scanf("%f", &mont);
+	    		   	           fflush(stdin);
+	    		   	            if(KN.Solde-mont > 500){
+	    		   	           KN.Solde = KN.Solde -mont;
+							   Retrait = KN.Solde;
+							   //REE
+						      }
+						    }while(KN.Solde-mont < 500);
+					  }
+						fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block); 	     
+	    		   	} while(!feof(fptr));
+	    		   	
+						fclose(file);
+ 	                    fclose(fptr); 	                
+	                  remove("ouver.txt");	                     
+	                  rename("dep.txt","ouver.txt");
+	                  printf("Le retrait a ete realise avec succes vous avez retire %.3f sur votre compte",mont); 
+     	            printf("\n Montant Actuel du Compte    : %.2f\n\n",Retrait);
+	   		}
+	   		else
+	   		printf("Votre compte est Bloquer");
+	   	}
+	    else
+	      printf("Code n'Existe pas ");
+	getch();
+}
+void transfert() {
+	 printf(":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+	float Transf;
+	int ok,code1,code;
+     printf("\n Saisir le code du client : ");
+	 scanf("%d",&code);	 
+    if(verification(code)==1)  {
+    	if(KN.Block!=5){
+            FILE *fptr,*file;            
+            fptr=fopen("ouver.txt" ,"r");
+            file=fopen("dep.txt" ,"a");            
+            do {                
+             fscanf(fptr,"%d %s %s %s %s %s %f %s %d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block); 
+              	if(code == KN.Code) {
+                	 KN.Code=code;
+                	 printf(" NOM               : %s\n",KN.Nom);
+     	             printf(" PRENOM            : %s\n",KN.Prenom);
+	    		   	 printf(" CODE              : %d\n",KN.Code);
+     	             printf(" SEXE              : %s\n",KN.Sexe);
+     	             printf(" ADRESSE           : %s\n", KN.adresse);
+     	             printf(" TELEPHONE         : %s\n", KN.telf);
+     	             printf(" SOLDE             : %f\n",KN.Solde);
+     	             printf(" TYPE_COMPTE       : %s\n",KN.type);       			        
+       			      do {
+       			    	  printf("\n Saisir la quantite d'argent a transferer : ");
+                          scanf("%f",&Transf);
+       			      } while((KN.Solde-250) < Transf);
+       			     KN.Solde=KN.Solde-Transf;                    
+              	}               
+                 fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block);
+                 
+            }while(!feof(fptr));            
+            fclose(file);
+            fclose(fptr);            
+            remove("ouver.txt");            
+            rename("dep.txt","ouver.txt");           
+        }  
+		else
+		printf("Votre compte est Bloquer");
+	}
+    else {
+        printf("\n Desole pas de transfert!\n");
+    }    
+    //*************Partie 2 ****************    
+    printf("\n Saisir le code du client pour le transfert : ");
+	scanf("%d",&code1);	
+    if(verification(code1)==1) {
+    	if(KN.Block!=5){
+            FILE *fptr,*file;            
+            fptr=fopen("ouver.txt" ,"r");
+            file=fopen("dep.txt" ,"a");            
+            do {                
+             fscanf(fptr,"%d %s %s %s %s %s %f %s %d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);                
+                if(code1 == KN.Code) {
+                    KN.Code=code1;
+                   
+	    		   	 printf(" CODE              : %d\n",KN.Code);
+	    		   	 printf(" NOM               : %s\n",KN.Nom);
+     	             printf(" PRENOM            : %s\n",KN.Prenom);
+     	             printf(" SEXE              : %s\n",KN.Sexe);
+     	             printf(" ADRESSE           : %s\n", KN.adresse);
+     	             printf(" TELEPHONE         : %s\n", KN.telf);
+     	             printf(" SOLDE             : %f\n",KN.Solde);
+     	             printf(" TYPE de COMPTE       : %s\n",KN.type);
+                    KN.Solde=KN.Solde+Transf;  
+				    printf("\nCOMPTE EXISTE \n\n");
+                }
+                
+       fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block);
+        }while(!feof(fptr));   		
+            fclose(file);
+            fclose(fptr);            
+            remove("ouver.txt"); 
+            rename("dep.txt","ouver.txt");
+    }      
+    else
+    printf("Votre compte est Bloquer");
+}
+	else {
+        printf("\n Ce code n'existe pas dans le fichier \n");
+	}   
+        printf("\nEst-ce que tous vos Informations sont Corrects ? \n");
+		printf("1.-Oui\n2.-Non\n");
+		scanf("%d",&ok);
+	if(ok==1) {
+		 printf("Transfert avec Succes ");
+	}
+	 if(ok==2) {
+        if(verification(code)==1){
+            FILE *fptr,*file;            
+            fptr = fopen("ouver.txt" ,"r");
+            file = fopen("dep.txt" ,"a");            
+            do {                
+             fscanf(fptr,"%d %s %s %s %s %s %f %s %d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);
+         	if(code == KN.Code)	{
+                		KN.Code=code;
+                        KN.Solde=KN.Solde+Transf;
+                	}
+                
+       fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block);
+       }while(!feof(fptr));
+            
+            fclose(file);
+            fclose(fptr);
+            remove("ouver.txt"); 
+            rename("dep.txt","ouver.txt");             
+            printf("\n Echec !!");         
+         }
+       else
+       {
+        printf("\n Ce code n'existe pas!\n");
+       }
+   }
+    getch(); 
+}
+void modifier()
+{
+	 printf(":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+     int CodeRech,longueur,reponse;
+	   	  	        printf("Saisir le code du client a modifier!    :  ");
+	                scanf("%d", &CodeRech);
+	    if(verification(CodeRech)==1){
+	    	if(KN.Block!=5){
+	     FILE *fptr;
+	     FILE *file;
+	     fptr = fopen("ouver.txt", "r");
+	     file= fopen("dep.txt", "a");    	
+			do {
+				    fscanf(fptr,"%d %s %s %s %s %s %f %s %d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,&KN.Block);
+				    if(KN.Code==CodeRech) {
+				 	 KN.Code=CodeRech;
+				 	 printf("NOUVEAU NOM                 : ");gets(KN.Nom); fflush(stdin);
+     	             printf("NOUVEAU PRENOM              : ");gets(KN.Prenom);fflush(stdin);
+     	             printf("NOUVEAU NUMERO DE TELEPHONE :");gets(KN.telf);fflush(stdin);
+     	             printf("NOUVELLE ADRESSE            : ");gets(KN.adresse);fflush(stdin);
+		            }
+		            fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block);
+	          }while(!feof(fptr));
+	           fclose(file);
+	           fclose(fptr);
+	            remove("ouver.txt");
+	            rename("dep.txt","ouver.txt");
+	            printf("Modification effectuee avec succes.");  
+        }
+        else
+        printf("Votre compte est Bloquer");
+    }
+    else
+    printf("Code introuvable !");
+    getch();
+}
+void bloquer() {
+	 printf(":==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+	int code3;
+	FILE *fptr,*file;
+	printf("Entrez le numero du compte que vous voulez bloquer : ");
+	scanf("%d", &code3);
+	if(verification(code3)==1) {
+	fptr = fopen("ouver.txt", "r");
+	file = fopen("dep.txt", "a");
+	do{
+		fscanf(fptr,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,KN.Block);
+		if(code3 == KN.Code){
+			KN.Block=5;
+			printf("Compte bloque avec succes!");
+		}
+		fprintf(file,"%d\n%s\n%s\n%s\n%s\n%s\n%f\n%s\t%d\n",KN.Code,KN.Nom,KN.Prenom,KN.Sexe,KN.adresse,KN.telf,KN.Solde,KN.type,KN.Block);
+	}while(!feof(fptr));
+	fclose(file);
+	fclose(fptr);
+	remove("ouver.txt");
+	rename("dep.txt", "ouver.txt");
+}
+ else{
+        printf("\t\t\t\t\t Ce Code n'existe pas dans le syst%cme !\n",138);
+	   	}
+	getch();
+}
+ void afficher() {
+ 	         FILE *fptr;
+	         printf("\t\t\t\t:==========>>>>><<<<< *KA_NHEL BANQUE* >>>>><<<<<==========:\n");
+ 	    	 fptr = fopen("ouver.txt", "r"); 
+ 	    	 int test=0;
+ 	          printf("\t\t\t\t\tAFFICHAGE DES COMPTES CLIENT    \n\n\n"); 	 
+	    
+		    while(fscanf(fptr,"%d %s %s %s %s %s %f %s %d\n",&KN.Code,&KN.Nom,&KN.Prenom,&KN.Sexe,&KN.adresse,&KN.telf,&KN.Solde,&KN.type,KN.Block)!=EOF)
+		    {
+			test++;
+		    printf("CODE              : %d\n",KN.Code); 	
+     	 	printf("NOM               : %s\n",KN.Nom);
+     	    printf("SEXE              : %s\n",KN.Sexe);
+     	    printf("ADRESSE           : %s\n",KN.adresse);
+     	    printf("TELEPHONE         : %s\n",KN.telf);
+     	    printf("SOLDE             : %.3f\n",KN.Solde);
+     	    printf("TYPE_COMPTE       : %s\n",KN.type);    
+			 if(KN.Block==5){
+			 	printf("\t\t\t\t\tCe compte est Bloquer"); 
+     	      }
+			printf("\t\t\t\t=============================================\n"); 
+			printf("\t\t\t\t=============================================\n");
+		
+	      }
+	      
+		  fclose(fptr);
+		   	if(test==0)
+		   {
+		   	 system("cls");
+		   	 printf("\nLe Compte est vide\n");
+		   }
+	 }
